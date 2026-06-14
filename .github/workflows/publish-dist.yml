@@ -1,0 +1,51 @@
+name: Publish dist to abyss-builds
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "src/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/publish-dist.yml"
+  workflow_dispatch:
+
+jobs:
+  build-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: corepack enable
+
+      - name: Install deps
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build (standalone, updater interne désactivé)
+        run: node --require=./scripts/suppressExperimentalWarnings.js scripts/build/build.mjs --standalone --disable-updater
+
+      - name: Setup deploy key
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.ABYSS_BUILDS_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts
+
+      - name: Publier la dist vers abyss-builds
+        run: |
+          git clone git@github.com:0ctane6/abyss-builds.git out
+          cp dist/desktop/patcher.js dist/desktop/preload.js dist/desktop/renderer.js dist/desktop/renderer.css out/
+          cd out
+          git config user.name "abyss-ci"
+          git config user.email "ci@abyss.local"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Dist inchangée, rien à publier."
+          else
+            git commit -m "Build dist depuis abyss@${GITHUB_SHA::7}"
+            git push
+          fi
