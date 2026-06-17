@@ -52,3 +52,60 @@
     color: var(--text-link);
     display: inline-block;
 }
+
+/* Signature « abysse » : un trou noir lent en tête du panneau Abyss.
+   Anneau d'accrétion qui tourne + cœur sombre qui respire. Pur CSS, un seul
+   endroit (dosage assumé), désactivé si l'utilisateur réduit les animations. */
+.vc-vencord-tab-abyss {
+    position: relative;
+    height: 92px;
+    margin: 2px 0 16px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+}
+
+.vc-vencord-tab-abyss::before {
+    content: "";
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0%,
+        rgb(255 255 255 / 60%) 14%,
+        transparent 40%,
+        rgb(138 120 255 / 45%) 66%,
+        transparent 92%
+    );
+    -webkit-mask: radial-gradient(circle, transparent 31%, #000 34%, #000 49%, transparent 53%);
+    mask: radial-gradient(circle, transparent 31%, #000 34%, #000 49%, transparent 53%);
+    animation: vc-abyss-spin 7s linear infinite;
+}
+
+.vc-vencord-tab-abyss::after {
+    content: "";
+    position: absolute;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #000 52%, rgb(120 100 220 / 35%) 76%, transparent 100%);
+    box-shadow: 0 0 28px 6px rgb(96 74 200 / 32%);
+    animation: vc-abyss-pulse 4.5s ease-in-out infinite;
+}
+
+@keyframes vc-abyss-spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes vc-abyss-pulse {
+    0%, 100% { transform: scale(1); opacity: .9; }
+    50% { transform: scale(1.08); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .vc-vencord-tab-abyss::before,
+    .vc-vencord-tab-abyss::after {
+        animation: none;
+    }
+}
