@@ -24,13 +24,40 @@ l'interface et range ses données dans `%APPDATA%\Abyss`.
 
 ## Nos plugins
 
-Dans **`src/userplugins/`** (versionné, contrairement au défaut). Exemple :
-`src/userplugins/abyssHello/`. Les plugins d'Equicord, eux, sont dans
-`src/equicordplugins/`.
+Dans **`src/userplugins/`** (versionné, contrairement au défaut). Les plugins
+d'Equicord, eux, sont dans `src/equicordplugins/`.
+
+Il n'y a **pas** de plugin d'exemple à copier : un échafaudage de démonstration
+finit dans la dist et apparaît dans la liste des plugins des utilisateurs. Le
+gabarit tient en quelques lignes, le voici.
 
 ```bash
-cp -r src/userplugins/abyssHello src/userplugins/monPlugin
-# édite index.tsx (name, description, start/patches…)
+mkdir -p src/userplugins/monPlugin
+```
+
+```ts
+// src/userplugins/monPlugin/index.ts
+/*
+ * Abyss — monPlugin
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+import definePlugin from "@utils/types";
+
+export default definePlugin({
+    name: "MonPlugin",
+    description: "Ce que ça fait, en une phrase.",
+    authors: [{ name: "0ctane", id: 0n }],
+
+    start() { /* … */ },
+    stop() { /* remets ce que start() a changé */ },
+});
+```
+
+Pour des réglages, `definePluginSettings` depuis `@api/Settings` ; pour un accès
+disque ou réseau, un `native.ts` à côté. Les plugins existants (`microStudio`,
+`followUser`, `skinwalkerProfile`) servent de références réelles.
+
+```bash
 pnpm build
 ```
 
