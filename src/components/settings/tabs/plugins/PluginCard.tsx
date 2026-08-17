@@ -17,6 +17,7 @@ import { React, showToast, Toasts } from "@webpack/common";
 import { PluginMeta } from "~plugins";
 
 import { openPluginModal } from "./PluginModal";
+import { SkinWalkerBadge } from "./skinwalkerBadge";
 
 const logger = new Logger("PluginCard");
 const cl = classNameFactory("vc-plugins-");
@@ -110,9 +111,9 @@ export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, on
         },
         {
             condition: isUserPlugin,
-            src: "https://equicord.org/assets/icons/misc/userplugin.png",
-            alt: "User",
-            title: "User Plugin"
+            src: SkinWalkerBadge,
+            alt: "Abyss",
+            title: "Abyss Plugin"
         }
     ];
 
